@@ -2,6 +2,7 @@ import subprocess
 
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.client.Extension import Extension
+from ulauncher.api.shared.action.BaseAction import BaseAction
 from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
 from ulauncher.api.shared.action.HideWindowAction import HideWindowAction
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
@@ -22,7 +23,7 @@ class KeywordQueryEventListener(EventListener):
     def __init__(self, servers: list[tuple[str, ...]]) -> None:
         self.servers = servers
 
-    def on_event(self, event, extension) -> RenderResultListAction:
+    def on_event(self, event: KeywordQueryEvent, extension: Extension) -> BaseAction:
         items = []
         for server in self.servers:
             items.append(
@@ -40,7 +41,7 @@ class KeywordQueryEventListener(EventListener):
 
 
 class ItemEnterEventListener(EventListener):
-    def on_event(self, event, extension):
+    def on_event(self, event: ItemEnterEvent, extension: Extension) -> BaseAction:
         data = event.get_data()
         servers: tuple[str] = data["servers"]
         result = []
