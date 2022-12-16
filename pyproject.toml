@@ -1,0 +1,13 @@
+[tool.black]
+line-length = 119
+exclude = '\.git'
+
+[tool.ruff]
+line-length = 119
+exclude = [
+    ".git",
+    ".ruff_cache",
+    "__pypackages__",
+]
+select = ["E", "F", "I"]
+
