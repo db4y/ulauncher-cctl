@@ -19,24 +19,27 @@ DJANGO_SERVERS = [
 ]
 
 
-class CircusCtlExtension(Extension):
-    def __init__(self):
+class CircusReloaderExtension(Extension):
+    def __init__(self) -> None:
         super().__init__()
-        self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
+        self.subscribe(KeywordQueryEvent, KeywordQueryEventListener(servers=DJANGO_SERVERS))
         self.subscribe(ItemEnterEvent, ItemEnterEventListener())
 
 
 class KeywordQueryEventListener(EventListener):
-    def on_event(self, event, extension):
+    def __init__(self, servers: list[tuple[str, ...]]) -> None:
+        self.servers = servers
+
+    def on_event(self, event, extension) -> RenderResultListAction:
         items = []
-        for server in DJANGO_SERVERS:
+        for server in self.servers:
             items.append(
                 ExtensionResultItem(
                     icon="images/icon.png",
                     name=", ".join(server),
-                    description=f"Restart {' and '.join(server)}",
-                    on_enver=ExtensionCustomAction(
-                        data={"server": server},
+                    description=f"Restart {', '.join(server)}",
+                    on_enter=ExtensionCustomAction(
+                        data={"servers": server},
                         keep_app_open=True,
                     ),
                 )
@@ -47,13 +50,17 @@ class KeywordQueryEventListener(EventListener):
 class ItemEnterEventListener(EventListener):
     def on_event(self, event, extension):
         data = event.get_data()
+        servers: tuple[str] = data["servers"]
         result = []
-        for server in data["server"]:
-            process_result = subprocess.run(["ssh", f"root@{server}", "circusctl restart"], capture_output=True)
-            result.append(f"{server}: {process_result.stdout.decode()}")
-        show_notification("Circus restart", "\n".join(result))
+        for server in servers:
+            pr = subprocess.run(
+                ["ssh", f"root@{server}", "circusctl restart"],
+                capture_output=True,
+            )
+            result.append(f"{server}: {pr.stdout.decode()}")
+        show_notification("Circusd restart", f"Circusd restarted: {', '.join(result)}")
         return HideWindowAction()
 
 
 if __name__ == "__main__":
-    CircusCtlExtension().run()
+    CircusReloaderExtension().run()
