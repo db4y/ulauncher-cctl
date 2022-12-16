@@ -7,6 +7,7 @@ from ulauncher.api.shared.action.HideWindowAction import HideWindowAction
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
 from ulauncher.api.shared.event import ItemEnterEvent, KeywordQueryEvent
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
+from ulauncher.utils.desktop.notification import show_notification
 
 DJANGO_SERVERS = [
     ("django-test.di.unistra.fr",),
@@ -50,7 +51,7 @@ class ItemEnterEventListener(EventListener):
         for server in data["server"]:
             process_result = subprocess.run(["ssh", f"root@{server}", "circusctl restart"], capture_output=True)
             result.append(f"{server}: {process_result.stdout.decode()}")
-        subprocess.run(["zenity", "--info", "--no-wrap", "--text", "\n".join(result)])
+        show_notification("Circus restart", "\n".join(result))
         return HideWindowAction()
 
 
