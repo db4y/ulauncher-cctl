@@ -10,4 +10,3 @@ exclude = [
     "__pypackages__",
 ]
 select = ["E", "F", "I"]
-
