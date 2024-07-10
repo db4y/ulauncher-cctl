@@ -7,6 +7,7 @@ DJANGO_SERVERS = [
     ("django-pprd-w3.di.unistra.fr", "django-pprd-w4.di.unistra.fr"),
     ("django-w3.u-strasbg.fr", "django-w4.u-strasbg.fr"),
     ("django-w7.di.unistra.fr", "django-w8.di.unistra.fr"),
+    ("django-w9.di.unistra.fr", "django-w10.di.unistra.fr"),
 ]
 
 if __name__ == "__main__":
